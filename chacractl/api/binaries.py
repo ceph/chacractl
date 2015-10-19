@@ -1,9 +1,10 @@
 import logging
 import sys
-from urlparse import urljoin
 import os
 from textwrap import dedent
+import requests
 from tambo import Transport
+
 import chacractl
 
 logger = logging.getLogger(__name__)
@@ -24,13 +25,14 @@ class Binary(object):
             chacractl.config['url'], 'binaries'
         )
 
-    def sanitize_stdin(self, line):
+    def sanitize_filename(self, line):
         """
         lines may come with newlines and leading slashes make sure
         they are clean so that they can be processed
         """
-        line = line.strip('\n').strip('/').strip('./')
-        return line.split('/')[-1]
+        line = line.strip('\n')
+        if os.path.exists(line):
+            return os.path.abspath(line)
 
     def sanitize_url(self, url_part):
         # get rid of the leading slash to prevent issues when joining
@@ -42,6 +44,13 @@ class Binary(object):
             url = "%s/" % url
         return url
 
+    def post(self, url, filepath):
+        with open(filepath) as binary:
+            post_file = requests.post(
+                url,
+                files={'file': binary},
+                auth=chacractl.config['credentials'])
+
     def main(self):
         self.parser = Transport(self.argv, options=self.options)
         self.parser.catch_help = self._help
@@ -49,16 +58,22 @@ class Binary(object):
         logger.info(self.base_url)
         # handle posting binaries:
         if self.parser.has('post'):
-            url_part = self.parser.get('post').strip('/')
+            url_part = self.sanitize_url(self.parser.get('post'))
             if not sys.stdin.isatty():
                 # read from stdin
                 logger.info('reading input from stdin')
                 for line in sys.stdin.readlines():
-                    filename = self.sanitize_stdin(line)
+                    filename = self.sanitize_filename(line)
                     if not filename:
                         continue
                     url = os.path.join(self.base_url, url_part)
-                    logger.warning('post %s %s', url, filename)
+                    self.post(url, filename)
             else:
+                filepath = self.sanitize_filename(self.argv[-1])
+                if not filepath:
+                    logger.warning(
+                        'provided path does not exist: %s', self.argv[-1]
+                    )
+                    return
                 url = os.path.join(self.base_url, url_part)
-                logger.warning('post %s', url)
+                self.post(url, filepath)
