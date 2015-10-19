@@ -47,6 +47,13 @@ class Binary(object):
         return url
 
     def post(self, url, filepath):
+        filename = os.path.basename(filepath)
+        file_url = os.path.join(url, filename) + '/'
+        exists = requests.head(file_url)
+        if exists.status_code == 200:
+            logger.warning('resource already exists, will not upload')
+            logger.warning('SKIP %s', file_url)
+            return
         logger.info('POSTing file: %s', filepath)
         with open(filepath) as binary:
             response = requests.post(
