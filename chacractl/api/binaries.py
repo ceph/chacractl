@@ -2,12 +2,14 @@ import logging
 import sys
 import os
 from textwrap import dedent
+
 import requests
 from tambo import Transport
 
 import chacractl
 
 logger = logging.getLogger(__name__)
+
 
 class Binary(object):
     _help = dedent("""
@@ -31,7 +33,7 @@ class Binary(object):
         they are clean so that they can be processed
         """
         line = line.strip('\n')
-        if os.path.exists(line):
+        if os.path.isfile(line):
             return os.path.abspath(line)
 
     def sanitize_url(self, url_part):
@@ -47,10 +49,12 @@ class Binary(object):
     def post(self, url, filepath):
         logger.info('POSTing file: %s', filepath)
         with open(filepath) as binary:
-            requests.post(
+            response = requests.post(
                 url,
                 files={'file': binary},
                 auth=chacractl.config['credentials'])
+        if response.status_code > 201:
+            logger.warning("%s -> %s", response.status_code, response.text)
 
     def main(self):
         self.parser = Transport(self.argv, options=self.options)
