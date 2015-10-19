@@ -45,8 +45,9 @@ class Binary(object):
         return url
 
     def post(self, url, filepath):
+        logger.info('POSTing file: %s', filepath)
         with open(filepath) as binary:
-            post_file = requests.post(
+            requests.post(
                 url,
                 files={'file': binary},
                 auth=chacractl.config['credentials'])
