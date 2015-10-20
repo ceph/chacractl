@@ -108,3 +108,21 @@ def make_exception_message(exc):
         return '%s: %s\n' % (exc.__class__.__name__, exc)
     else:
         return '%s\n' % (exc.__class__.__name__)
+
+
+def requests_errors(exc):
+    url = exc.request.url
+    method = exc.request.method
+    code = exc.response.status_code
+    err_to_msg = {
+        404: "resource does not exist",
+        405: "method is not allowed",
+        401: "authentication failed"
+    }
+    msg = "%s for %s failed: %d %s" % (
+        method,
+        url,
+        code,
+        err_to_msg.get(code, '')
+    )
+    raise RuntimeError(msg)
