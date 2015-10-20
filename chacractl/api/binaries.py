@@ -13,7 +13,15 @@ logger = logging.getLogger(__name__)
 
 class Binary(object):
     _help = dedent("""
-    operate binaries on a remote chacra instance.
+    Operate binaries on a remote chacra instance.
+
+    Creating a new binary::
+
+        chacractl binary create project/ref/distro/distro_version/arch /path/to/binary
+
+    Options:
+
+    create        Creates a new binary at a given distro version architecture
     """)
     help_menu = "create, update metadata, or delete binaries"
     options = ['create']
@@ -67,7 +75,7 @@ class Binary(object):
         self.parser = Transport(self.argv, options=self.options)
         self.parser.catch_help = self._help
         self.parser.parse_args()
-        logger.info(self.base_url)
+
         # handle posting binaries:
         if self.parser.has('create'):
             url_part = self.sanitize_url(self.parser.get('create'))
