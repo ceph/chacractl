@@ -1,4 +1,9 @@
+import logging
 import chacractl
+
+
+logger = logging.getLogger(__name__)
+
 
 class Repo(object):
 
@@ -8,6 +13,4 @@ class Repo(object):
         self.argv = argv
 
     def main(self):
-        print chacractl.config
-        pass
-
+        raise RuntimeError('repo subcommand is not yet implemented')
