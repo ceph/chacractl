@@ -25,12 +25,12 @@ The CLI allows for a few interactions with binaries, depending on the action
 needed the requirements may change. For example when trying to upload a binary,
 the tool can accept either ``stdin`` or an actual file input.
 
-post
-^^^^
+create
+^^^^^^
 For POSTing a binary, if posting a single binary it is best to just pass the
 full path as the last argument to the ``binary`` subcommand::
 
-    chacractl binary post project/ref/distro/distro-version/arch /path/to/binary.rpm
+    chacractl binary create project/ref/distro/distro-version/arch /path/to/binary.rpm
 
 But for convenience, if sending many files, it can also accept them from stdin,
 usually with the output of a ``find`` command that can be filtered with
@@ -39,6 +39,4 @@ usually with the output of a ``find`` command that can be filtered with
 Below is an example of such a command for a project like ``ceph-deploy``::
 
     find ~/repos | grep ceph-deploy | grep rpm | grep noarch | grep el6
-    | chacractl binary post ceph-deploy/master/centos/6/noarch
-
-
+    | chacractl binary create ceph-deploy/master/centos/6/noarch
