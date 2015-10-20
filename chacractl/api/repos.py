@@ -40,7 +40,7 @@ class Repo(object):
         exists = requests.head(
             url,
             auth=chacractl.config['credentials'])
-        #exists.raise_for_status()
+        exists.raise_for_status()
         logger.info('POST: %s', url)
         response = requests.post(
             url,
