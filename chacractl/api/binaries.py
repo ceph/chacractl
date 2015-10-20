@@ -15,8 +15,8 @@ class Binary(object):
     _help = dedent("""
     operate binaries on a remote chacra instance.
     """)
-    help_menu = "upload, update metadata, or delete binaries"
-    options = ['post']
+    help_menu = "create, update metadata, or delete binaries"
+    options = ['create']
 
     def __init__(self, argv):
         self.argv = argv
@@ -69,8 +69,8 @@ class Binary(object):
         self.parser.parse_args()
         logger.info(self.base_url)
         # handle posting binaries:
-        if self.parser.has('post'):
-            url_part = self.sanitize_url(self.parser.get('post'))
+        if self.parser.has('create'):
+            url_part = self.sanitize_url(self.parser.get('create'))
             if not sys.stdin.isatty():
                 # read from stdin
                 logger.info('reading input from stdin')
