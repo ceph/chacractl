@@ -48,7 +48,7 @@ class Binary(object):
         # get rid of the leading slash to prevent issues when joining
         url = url_part.lstrip('/')
 
-        # and add a trailing slash so that the POST is done at the correct
+        # and add a trailing slash so that the request is done at the correct
         # canonical url
         if not url.endswith('/'):
             url = "%s/" % url
@@ -68,6 +68,19 @@ class Binary(object):
                 url,
                 files={'file': binary},
                 auth=chacractl.config['credentials'])
+        if response.status_code > 201:
+            logger.warning("%s -> %s", response.status_code, response.text)
+
+    def delete(self, url):
+        exists = requests.head(url)
+        if exists.status_code == 404:
+            logger.warning('resource already deleted')
+            logger.warning('SKIP %s', url)
+            return
+        logger.info('DELETE file: %s', url)
+        response = requests.delete(
+            url,
+            auth=chacractl.config['credentials'])
         if response.status_code > 201:
             logger.warning("%s -> %s", response.status_code, response.text)
 
@@ -97,3 +110,8 @@ class Binary(object):
                     return
                 url = os.path.join(self.base_url, url_part)
                 self.post(url, filepath)
+
+        elif self.parser.has('delete'):
+            url_part = self.sanitize_url(self.parser.get('delete'))
+            url = os.path.join(self.base_url, url_part)
+            self.delete(url)
