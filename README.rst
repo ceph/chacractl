@@ -40,3 +40,14 @@ Below is an example of such a command for a project like ``ceph-deploy``::
 
     find ~/repos | grep ceph-deploy | grep rpm | grep noarch | grep el6
     | chacractl binary create ceph-deploy/master/centos/6/noarch
+
+
+exists
+------
+Check whether a given url endpoint exists or not. This subcommand requires the
+full url part (as opposed to other subcommands that require the url starting
+from the project name)::
+
+    chacractl exists repos/ceph-deploy/master/centos/7
+
+If the endpoint is not found it will return a non-zero exit status
