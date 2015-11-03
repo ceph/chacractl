@@ -22,9 +22,10 @@ class Binary(object):
     Options:
 
     create        Creates a new binary at a given distro version architecture
+    --force       If the resource exists, force the upload
     """)
     help_menu = "create, update metadata, or delete binaries"
-    options = ['create']
+    options = ['create', '--force']
 
     def __init__(self, argv):
         self.argv = argv
@@ -57,16 +58,35 @@ class Binary(object):
     def post(self, url, filepath):
         filename = os.path.basename(filepath)
         file_url = os.path.join(url, filename) + '/'
-        exists = requests.head(file_url)
+        exists = requests.head(file_url, verify=False)
+        exists.raise_for_status()
         if exists.status_code == 200:
-            logger.warning('resource already exists, will not upload')
-            logger.warning('SKIP %s', file_url)
-            return
+            if not self.force:
+                logger.warning(
+                    'resource exists and --force was not used, will not upload'
+                )
+                logger.warning('SKIP %s', file_url)
+                return
+            return self.put(url, filepath)
         logger.info('POSTing file: %s', filepath)
         with open(filepath) as binary:
             response = requests.post(
                 url,
                 files={'file': binary},
+                verify=False,
+                auth=chacractl.config['credentials'])
+        if response.status_code > 201:
+            logger.warning("%s -> %s", response.status_code, response.text)
+            response.raise_for_status()
+
+    def put(self, url, filepath):
+        logger.info('resource exists and --force was used, will re-upload')
+        logger.info('PUTing file: %s', filepath)
+        with open(filepath) as binary:
+            response = requests.put(
+                url,
+                files={'file': binary},
+                verify=False,
                 auth=chacractl.config['credentials'])
         if response.status_code > 201:
             logger.warning("%s -> %s", response.status_code, response.text)
@@ -88,6 +108,7 @@ class Binary(object):
         self.parser = Transport(self.argv, options=self.options)
         self.parser.catch_help = self._help
         self.parser.parse_args()
+        self.force = self.parser.has('--force')
 
         # handle posting binaries:
         if self.parser.has('create'):
