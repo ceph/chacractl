@@ -58,7 +58,7 @@ class Binary(object):
     def post(self, url, filepath):
         filename = os.path.basename(filepath)
         file_url = os.path.join(url, filename) + '/'
-        exists = requests.head(file_url, verify=False)
+        exists = requests.head(file_url)
         exists.raise_for_status()
         if exists.status_code == 200:
             if not self.force:
@@ -73,7 +73,6 @@ class Binary(object):
             response = requests.post(
                 url,
                 files={'file': binary},
-                verify=False,
                 auth=chacractl.config['credentials'])
         if response.status_code > 201:
             logger.warning("%s -> %s", response.status_code, response.text)
@@ -86,7 +85,6 @@ class Binary(object):
             response = requests.put(
                 url,
                 files={'file': binary},
-                verify=False,
                 auth=chacractl.config['credentials'])
         if response.status_code > 201:
             logger.warning("%s -> %s", response.status_code, response.text)
