@@ -1,3 +1,9 @@
+0.0.4
+-----
+Release Date: November 3rd, 2015
+
+* Fix an issue when raising errors when posting to a 404 url
+
 0.0.3
 -----
 Release Date: November 3rd, 2015
