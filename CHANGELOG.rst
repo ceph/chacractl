@@ -1,3 +1,9 @@
+0.0.3
+-----
+Release Date: November 3rd, 2015
+
+* Add a ``--force`` flag to be able to re-upload binaries
+
 0.0.2
 -----
 Release Date: October 27th, 2015
