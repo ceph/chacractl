@@ -42,6 +42,10 @@ Below is an example of such a command for a project like ``ceph-deploy``::
     | chacractl binary create ceph-deploy/master/centos/6/noarch
 
 
+If a binary already exists and there is a need to re-upload it, the ``--force``
+flag must be used. In that case the request will be a ``PUT`` and the resource
+will be overwritten in the API.
+
 exists
 ------
 Check whether a given url endpoint exists or not. This subcommand requires the
