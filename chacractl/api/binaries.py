@@ -59,7 +59,7 @@ class Binary(object):
         filename = os.path.basename(filepath)
         file_url = os.path.join(url, filename) + '/'
         exists = requests.head(file_url)
-        exists.raise_for_status()
+
         if exists.status_code == 200:
             if not self.force:
                 logger.warning(
@@ -68,12 +68,13 @@ class Binary(object):
                 logger.warning('SKIP %s', file_url)
                 return
             return self.put(url, filepath)
-        logger.info('POSTing file: %s', filepath)
-        with open(filepath) as binary:
-            response = requests.post(
-                url,
-                files={'file': binary},
-                auth=chacractl.config['credentials'])
+        elif exists.status_code == 404:
+            logger.info('POSTing file: %s', filepath)
+            with open(filepath) as binary:
+                response = requests.post(
+                    url,
+                    files={'file': binary},
+                    auth=chacractl.config['credentials'])
         if response.status_code > 201:
             logger.warning("%s -> %s", response.status_code, response.text)
             response.raise_for_status()
