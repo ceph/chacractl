@@ -67,7 +67,7 @@ class Binary(object):
                 )
                 logger.warning('SKIP %s', file_url)
                 return
-            return self.put(url, filepath)
+            return self.put(file_url, filepath)
         elif exists.status_code == 404:
             logger.info('POSTing file: %s', filepath)
             with open(filepath) as binary:
