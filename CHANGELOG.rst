@@ -1,3 +1,9 @@
+0.0.5
+-----
+Release Date: November 9rd, 2015
+
+* Use the filename when doing a PUT to re-upload a binary
+
 0.0.4
 -----
 Release Date: November 3rd, 2015
