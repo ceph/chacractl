@@ -25,7 +25,7 @@ class Binary(object):
     --force       If the resource exists, force the upload
     """)
     help_menu = "create, update metadata, or delete binaries"
-    options = ['create', '--force']
+    options = ['create', '--force', 'delete']
 
     def __init__(self, argv):
         self.argv = argv
