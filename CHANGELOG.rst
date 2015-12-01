@@ -1,3 +1,9 @@
+0.0.6
+-----
+Release Date: December 2nd, 2015
+
+* Minor fix for DELETE operations, actually making them work
+
 0.0.5
 -----
 Release Date: November 9rd, 2015
