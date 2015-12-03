@@ -15,7 +15,7 @@ setup(
     scripts = ['bin/chacractl'],
     install_requires = ['tambo>=0.1.0', 'requests'],
     version = metadata['version'],
-    url = 'http://github.com/alfredodeza/chacractl',
+    url = 'https://github.com/ceph/chacractl',
     license = "MIT",
     zip_safe = False,
     keywords = "http api chacra",
