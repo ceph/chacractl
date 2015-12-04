@@ -22,6 +22,7 @@ class Binary(object):
     Options:
 
     create        Creates a new binary at a given distro version architecture
+    delete        Deletes an existing binary from chacra
     --force       If the resource exists, force the upload
     """)
     help_menu = "create, update metadata, or delete binaries"
