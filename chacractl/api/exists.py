@@ -24,8 +24,8 @@ class Exists(object):
 
     [URL]        The endpoint, starting with the full url part (sans fqdn)
     """)
-    help_menu = "recreate, delete, or update repositories"
-    options = ['recreate', 'update']
+    help_menu = "check if a given URL part exists already"
+    options = []
 
     def __init__(self, argv):
         self.argv = argv
