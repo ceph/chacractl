@@ -71,7 +71,7 @@ class Binary(object):
             return self.put(file_url, filepath)
         elif exists.status_code == 404:
             logger.info('POSTing file: %s', filepath)
-            with open(filepath) as binary:
+            with open(filepath, 'rb') as binary:
                 response = requests.post(
                     url,
                     files={'file': binary},
@@ -83,7 +83,7 @@ class Binary(object):
     def put(self, url, filepath):
         logger.info('resource exists and --force was used, will re-upload')
         logger.info('PUTing file: %s', filepath)
-        with open(filepath) as binary:
+        with open(filepath, 'rb') as binary:
             response = requests.put(
                 url,
                 files={'file': binary},
