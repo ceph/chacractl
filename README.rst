@@ -55,3 +55,31 @@ from the project name)::
     chacractl exists repos/ceph-deploy/master/centos/7
 
 If the endpoint is not found it will return a non-zero exit status
+
+
+repos
+-----
+Repositories can be updated or fully re-created. This is useful when the API
+changes and the repository creation wasn't triggered.
+
+recreate
+^^^^^^^^
+A ``recreate`` call will fully remove a repository on disc and will instruct
+the API to queue a repo creation. These actions are not immediate: the removal
+of the repository will happen as soon as the request is processed and the
+repository creation will be done when the queue does the job (possibly after
+a configured timeout)
+
+A simple call would look like::
+
+    chacractl repo recreate ceph/infernalis/debian/jessie
+
+Note how the full path to the distribution version is needed.
+
+update
+^^^^^^
+Similar to ``recreate``, but it will not remove the actual repository on disc
+before queuing the request. It is useful when a binary has been added and the
+client wants to ensure it is added to the repo::
+
+    chacractl repo update ceph/infernalis/debian/jessie
