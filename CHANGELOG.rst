@@ -1,3 +1,11 @@
+0.0.7
+-----
+Release Date: December 21st, 2015
+
+* Fix unicode issues when uploading binaries as text.
+* Implement support for project creation
+
+
 0.0.6
 -----
 Release Date: December 2nd, 2015
