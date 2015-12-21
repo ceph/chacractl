@@ -4,7 +4,7 @@ import sys
 
 from tambo import Transport
 import chacractl
-from chacractl.api import binaries, repos, exists
+from chacractl.api import binaries, repos, exists, projects
 from chacractl.decorators import catches
 from chacractl import log, util
 
@@ -26,6 +26,7 @@ Sub Commands:
 
     mapper = {
         'binary': binaries.Binary,
+        'project': projects.Project,
         'repo': repos.Repo,
         'exists': exists.Exists,
     }
