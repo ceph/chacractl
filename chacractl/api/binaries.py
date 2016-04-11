@@ -59,7 +59,7 @@ class Binary(object):
     def post(self, url, filepath):
         filename = os.path.basename(filepath)
         file_url = os.path.join(url, filename) + '/'
-        exists = requests.head(file_url)
+        exists = requests.head(file_url, verify=chacractl.config['ssl_verify'])
 
         if exists.status_code == 200:
             if not self.force:
@@ -75,7 +75,8 @@ class Binary(object):
                 response = requests.post(
                     url,
                     files={'file': binary},
-                    auth=chacractl.config['credentials'])
+                    auth=chacractl.config['credentials'],
+                    verify=chacractl.config['ssl_verify'])
         if response.status_code > 201:
             logger.warning("%s -> %s", response.status_code, response.text)
             response.raise_for_status()
@@ -87,12 +88,13 @@ class Binary(object):
             response = requests.put(
                 url,
                 files={'file': binary},
-                auth=chacractl.config['credentials'])
+                auth=chacractl.config['credentials'],
+                verify=chacractl.config['ssl_verify'])
         if response.status_code > 201:
             logger.warning("%s -> %s", response.status_code, response.text)
 
     def delete(self, url):
-        exists = requests.head(url)
+        exists = requests.head(url, verify=chacractl.config['ssl_verify'])
         if exists.status_code == 404:
             logger.warning('resource already deleted')
             logger.warning('SKIP %s', url)
@@ -100,7 +102,8 @@ class Binary(object):
         logger.info('DELETE file: %s', url)
         response = requests.delete(
             url,
-            auth=chacractl.config['credentials'])
+            auth=chacractl.config['credentials'],
+            verify=chacractl.config['ssl_verify'])
         if response.status_code > 201:
             logger.warning("%s -> %s", response.status_code, response.text)
 

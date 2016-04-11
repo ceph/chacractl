@@ -46,7 +46,7 @@ class Project(object):
         return url
 
     def post(self, url):
-        exists = requests.head(url)
+        exists = requests.head(url, verify=chacractl.config['ssl_verify'])
 
         if exists.status_code == 200:
             logger.warning('resource exists, will not upload')
@@ -56,7 +56,8 @@ class Project(object):
             logger.info('POSTing to project: %s', url)
             response = requests.post(
                 url,
-                auth=chacractl.config['credentials'])
+                auth=chacractl.config['credentials'],
+                verify=chacractl.config['ssl_verify'])
         if response.status_code > 201:
             logger.warning("%s -> %s", response.status_code, response.text)
             response.raise_for_status()
@@ -64,7 +65,7 @@ class Project(object):
     def delete(self, url):
         # XXX This exists here but it is not yet implemented, e.g. nothing
         # calls this method
-        exists = requests.head(url)
+        exists = requests.head(url, verify=chacractl.config['ssl_verify'])
         if exists.status_code == 404:
             logger.warning('project already deleted')
             logger.warning('SKIP %s', url)
@@ -72,7 +73,8 @@ class Project(object):
         logger.info('DELETE project: %s', url)
         response = requests.delete(
             url,
-            auth=chacractl.config['credentials'])
+            auth=chacractl.config['credentials'],
+            verify=chacractl.config['ssl_verify'])
         if response.status_code > 201:
             logger.warning("%s -> %s", response.status_code, response.text)
 

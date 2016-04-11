@@ -39,12 +39,14 @@ class Repo(object):
     def post(self, url):
         exists = requests.head(
             url,
-            auth=chacractl.config['credentials'])
+            auth=chacractl.config['credentials'],
+            verify=chacractl.config['ssl_verify'])
         exists.raise_for_status()
         logger.info('POST: %s', url)
         response = requests.post(
             url,
-            auth=chacractl.config['credentials'])
+            auth=chacractl.config['credentials'],
+            verify=chacractl.config['ssl_verify'])
         response.raise_for_status()
         json = response.json()
         for k, v in json.items():
