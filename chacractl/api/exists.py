@@ -46,7 +46,8 @@ class Exists(object):
         logger.info('HEAD: %s', url)
         exists = requests.head(
             url,
-            auth=chacractl.config['credentials'])
+            auth=chacractl.config['credentials'],
+            verify=chacractl.config['ssl_verify'])
         exists.raise_for_status()
 
     def main(self):

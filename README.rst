@@ -15,6 +15,7 @@ information::
     url = "http://example/"
     user = "admin"
     key = "secret"
+    ssl_verify = True
 
 These values need to be modified so that the CLI can interact with the remote
 API.

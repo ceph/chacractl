@@ -33,6 +33,7 @@ def ensure_default_config():
     url = "http://example"
     user = "chacra user"
     key = "secret"
+    ssl_verify = True
     """)
     config = default_config_path()
     if not os.path.exists(config):
