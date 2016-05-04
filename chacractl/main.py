@@ -52,7 +52,7 @@ Sub Commands:
             user, key = conf_module.user, conf_module.key
         chacractl.config['credentials'] = (user, key)
         chacractl.config['url'] = conf_module.url
-        chacractl.config['ssl_verify'] = conf_module.ssl_verify
+        chacractl.config['ssl_verify'] = getattr(conf_module, 'ssl_verify', True)
 
     @catches((RuntimeError, KeyboardInterrupt))
     def main(self, argv):
