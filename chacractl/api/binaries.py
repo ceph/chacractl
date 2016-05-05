@@ -136,6 +136,8 @@ class Binary(object):
                 self.post(url, filepath)
 
         elif self.parser.has('delete'):
+            if self.parser.get('delete') is None:
+                raise SystemExit('Specify a URL to delete a binary.')
             url_part = self.sanitize_url(self.parser.get('delete'))
             url = os.path.join(self.base_url, url_part)
             self.delete(url)
