@@ -1,5 +1,6 @@
 import imp
 import os
+import sys
 from textwrap import dedent
 
 
@@ -20,6 +21,7 @@ def load_config():
     config = get_config_path()
     if not config:
         return
+    sys.modules.pop('chacractl', None)
     return imp.load_source('chacractl', config)
 
 
