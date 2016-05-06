@@ -104,7 +104,7 @@ class Binary(object):
             url,
             auth=chacractl.config['credentials'],
             verify=chacractl.config['ssl_verify'])
-        if response.status_code > 201:
+        if response.status_code < 200 or response.status_code > 299:
             logger.warning("%s -> %s", response.status_code, response.text)
 
     def main(self):
