@@ -1,3 +1,15 @@
+0.0.8
+-----
+Release Date: June 13th, 2016
+
+* Adds ``ssl_verify`` option for configuraton, to prevent issues on local
+  chacra instances where self signed ssl certs are used
+* Reset the chacractl config for tests that needs them
+* add travis.yml configuration
+* binaries: fix issue when deleting, treating 204 as an error
+* binaries: silence warnings when deleting
+
+
 0.0.7
 -----
 Release Date: December 21st, 2015
