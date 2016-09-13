@@ -1,7 +1,9 @@
 import logging
 import sys
 import os
+import posixpath
 from textwrap import dedent
+from hashlib import sha512
 
 import requests
 from tambo import Transport
@@ -56,6 +58,20 @@ class Binary(object):
             url = "%s/" % url
         return url
 
+    def load_file(self, filepath):
+        chsum = sha512()
+        binary = open(filepath, 'rb')
+        for chunk in iter(lambda: binary.read(4096), b''):
+            chsum.update(chunk)
+        binary.seek(0)
+        return binary, chsum.hexdigest()
+
+    def verify_upload(arch_url, filename, digest):
+        r = requests.get(arch_url, verify=chacractl.config['ssl_verify'])
+        r.raise_for_status()
+        arch_data = r.json()
+        return arch_data[filename]['checksum'] == digest
+
     def post(self, url, filepath):
         filename = os.path.basename(filepath)
         file_url = os.path.join(url, filename) + '/'
@@ -71,8 +87,8 @@ class Binary(object):
             return self.put(file_url, filepath)
         elif exists.status_code == 404:
             logger.info('POSTing file: %s', filepath)
-            with open(filepath, 'rb') as binary:
-                response = requests.post(
+            binary, digest = self.load_file(filepath)
+            response = requests.post(
                     url,
                     files={'file': binary},
                     auth=chacractl.config['credentials'],
@@ -80,18 +96,27 @@ class Binary(object):
         if response.status_code > 201:
             logger.warning("%s -> %s", response.status_code, response.text)
             response.raise_for_status()
+        if not self.verify_upload(url, filename, digest):
+            # Since this is a new file, attempt to delete it
+            self.delete(file_url)
+            raise SystemExit('Uploaded file checksum mismatch!')
 
     def put(self, url, filepath):
+        filename = os.path.basename(filepath)
         logger.info('resource exists and --force was used, will re-upload')
         logger.info('PUTing file: %s', filepath)
-        with open(filepath, 'rb') as binary:
-            response = requests.put(
+        binary, digest = self.load_file(filepath)
+        response = requests.put(
                 url,
                 files={'file': binary},
                 auth=chacractl.config['credentials'],
                 verify=chacractl.config['ssl_verify'])
         if response.status_code > 201:
             logger.warning("%s -> %s", response.status_code, response.text)
+        if not self.verify_upload(url, filename, digest):
+            # Maybe the old file with a different digest is still there, so
+            # don't delete it
+            raise SystemExit('Uploaded file checksum mismatch!')
 
     def delete(self, url):
         exists = requests.head(url, verify=chacractl.config['ssl_verify'])
