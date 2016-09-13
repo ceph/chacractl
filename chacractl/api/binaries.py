@@ -1,7 +1,6 @@
 import logging
 import sys
 import os
-import posixpath
 from textwrap import dedent
 from hashlib import sha512
 
