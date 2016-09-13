@@ -102,7 +102,9 @@ class Binary(object):
                     'Deleting corrupted file from server...',
                     filepath)
             self.delete(file_url)
-            raise SystemExit('Uploaded file checksum mismatch!')
+            raise SystemExit(
+                    'Checksum mismatch: server has wrong checksum for %s! '
+                    'Deleting corrupted file from server...' % filepath)
 
     def put(self, url, filepath):
         filename = os.path.basename(filepath)
@@ -119,7 +121,9 @@ class Binary(object):
         if not self.verify_upload(url, filename, digest):
             # Maybe the old file with a different digest is still there, so
             # don't delete it
-            raise SystemExit('Uploaded file checksum mismatch!')
+            raise SystemExit(
+                    'Checksum mismatch: server has wrong checksum for %s!'
+                    % filepath)
 
     def delete(self, url):
         exists = requests.head(url, verify=chacractl.config['ssl_verify'])
