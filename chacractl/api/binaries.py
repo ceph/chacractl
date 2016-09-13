@@ -98,6 +98,10 @@ class Binary(object):
             response.raise_for_status()
         if not self.verify_upload(url, filename, digest):
             # Since this is a new file, attempt to delete it
+            logging.error(
+                    'Checksum mismatch: server has wrong checksum for %s! '
+                    'Deleting corrupted file from server...',
+                    filepath)
             self.delete(file_url)
             raise SystemExit('Uploaded file checksum mismatch!')
 
