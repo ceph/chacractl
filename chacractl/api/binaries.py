@@ -87,11 +87,12 @@ class Binary(object):
         elif exists.status_code == 404:
             logger.info('POSTing file: %s', filepath)
             binary, digest = self.load_file(filepath)
-            response = requests.post(
-                    url,
-                    files={'file': binary},
-                    auth=chacractl.config['credentials'],
-                    verify=chacractl.config['ssl_verify'])
+            with binary:
+                response = requests.post(
+                        url,
+                        files={'file': binary},
+                        auth=chacractl.config['credentials'],
+                        verify=chacractl.config['ssl_verify'])
         if response.status_code > 201:
             logger.warning("%s -> %s", response.status_code, response.text)
             response.raise_for_status()
@@ -111,11 +112,12 @@ class Binary(object):
         logger.info('resource exists and --force was used, will re-upload')
         logger.info('PUTing file: %s', filepath)
         binary, digest = self.load_file(filepath)
-        response = requests.put(
-                url,
-                files={'file': binary},
-                auth=chacractl.config['credentials'],
-                verify=chacractl.config['ssl_verify'])
+        with binary:
+            response = requests.put(
+                    url,
+                    files={'file': binary},
+                    auth=chacractl.config['credentials'],
+                    verify=chacractl.config['ssl_verify'])
         if response.status_code > 201:
             logger.warning("%s -> %s", response.status_code, response.text)
         if not self.upload_is_verified(url, filename, digest):
