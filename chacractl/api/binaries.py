@@ -65,7 +65,7 @@ class Binary(object):
         binary.seek(0)
         return binary, chsum.hexdigest()
 
-    def verify_upload(arch_url, filename, digest):
+    def upload_is_verified(arch_url, filename, digest):
         r = requests.get(arch_url, verify=chacractl.config['ssl_verify'])
         r.raise_for_status()
         arch_data = r.json()
@@ -95,7 +95,7 @@ class Binary(object):
         if response.status_code > 201:
             logger.warning("%s -> %s", response.status_code, response.text)
             response.raise_for_status()
-        if not self.verify_upload(url, filename, digest):
+        if not self.upload_is_verified(url, filename, digest):
             # Since this is a new file, attempt to delete it
             logging.error(
                     'Checksum mismatch: server has wrong checksum for %s!',
@@ -118,7 +118,7 @@ class Binary(object):
                 verify=chacractl.config['ssl_verify'])
         if response.status_code > 201:
             logger.warning("%s -> %s", response.status_code, response.text)
-        if not self.verify_upload(url, filename, digest):
+        if not self.upload_is_verified(url, filename, digest):
             # Maybe the old file with a different digest is still there, so
             # don't delete it
             raise SystemExit(
