@@ -98,13 +98,13 @@ class Binary(object):
         if not self.verify_upload(url, filename, digest):
             # Since this is a new file, attempt to delete it
             logging.error(
-                    'Checksum mismatch: server has wrong checksum for %s! '
-                    'Deleting corrupted file from server...',
+                    'Checksum mismatch: server has wrong checksum for %s!',
                     filepath)
+            logging.error('Deleting corrupted file from server...')
             self.delete(file_url)
             raise SystemExit(
-                    'Checksum mismatch: server has wrong checksum for %s! '
-                    'Deleting corrupted file from server...' % filepath)
+                    'Checksum mismatch: server has wrong checksum for %s!'
+                    % filepath)
 
     def put(self, url, filepath):
         filename = os.path.basename(filepath)
