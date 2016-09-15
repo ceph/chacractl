@@ -2,6 +2,7 @@ import logging
 import sys
 import os
 from textwrap import dedent
+from hashlib import sha512
 
 import requests
 from tambo import Transport
@@ -56,6 +57,20 @@ class Binary(object):
             url = "%s/" % url
         return url
 
+    def load_file(self, filepath):
+        chsum = sha512()
+        binary = open(filepath, 'rb')
+        for chunk in iter(lambda: binary.read(4096), b''):
+            chsum.update(chunk)
+        binary.seek(0)
+        return binary, chsum.hexdigest()
+
+    def upload_is_verified(arch_url, filename, digest):
+        r = requests.get(arch_url, verify=chacractl.config['ssl_verify'])
+        r.raise_for_status()
+        arch_data = r.json()
+        return arch_data[filename]['checksum'] == digest
+
     def post(self, url, filepath):
         filename = os.path.basename(filepath)
         file_url = os.path.join(url, filename) + '/'
@@ -71,27 +86,46 @@ class Binary(object):
             return self.put(file_url, filepath)
         elif exists.status_code == 404:
             logger.info('POSTing file: %s', filepath)
-            with open(filepath, 'rb') as binary:
+            binary, digest = self.load_file(filepath)
+            with binary:
                 response = requests.post(
+                        url,
+                        files={'file': binary},
+                        auth=chacractl.config['credentials'],
+                        verify=chacractl.config['ssl_verify'])
+        if response.status_code > 201:
+            logger.warning("%s -> %s", response.status_code, response.text)
+            response.raise_for_status()
+        if not self.upload_is_verified(url, filename, digest):
+            # Since this is a new file, attempt to delete it
+            logging.error(
+                    'Checksum mismatch: server has wrong checksum for %s!',
+                    filepath)
+            logging.error('Deleting corrupted file from server...')
+            self.delete(file_url)
+            raise SystemExit(
+                    'Checksum mismatch: server has wrong checksum for %s!'
+                    % filepath)
+
+    def put(self, url, filepath):
+        filename = os.path.basename(filepath)
+        logger.info('resource exists and --force was used, will re-upload')
+        logger.info('PUTing file: %s', filepath)
+        binary, digest = self.load_file(filepath)
+        with binary:
+            response = requests.put(
                     url,
                     files={'file': binary},
                     auth=chacractl.config['credentials'],
                     verify=chacractl.config['ssl_verify'])
         if response.status_code > 201:
             logger.warning("%s -> %s", response.status_code, response.text)
-            response.raise_for_status()
-
-    def put(self, url, filepath):
-        logger.info('resource exists and --force was used, will re-upload')
-        logger.info('PUTing file: %s', filepath)
-        with open(filepath, 'rb') as binary:
-            response = requests.put(
-                url,
-                files={'file': binary},
-                auth=chacractl.config['credentials'],
-                verify=chacractl.config['ssl_verify'])
-        if response.status_code > 201:
-            logger.warning("%s -> %s", response.status_code, response.text)
+        if not self.upload_is_verified(url, filename, digest):
+            # Maybe the old file with a different digest is still there, so
+            # don't delete it
+            raise SystemExit(
+                    'Checksum mismatch: server has wrong checksum for %s!'
+                    % filepath)
 
     def delete(self, url):
         exists = requests.head(url, verify=chacractl.config['ssl_verify'])
