@@ -65,7 +65,7 @@ class Binary(object):
         binary.seek(0)
         return binary, chsum.hexdigest()
 
-    def upload_is_verified(arch_url, filename, digest):
+    def upload_is_verified(self, arch_url, filename, digest):
         r = requests.get(arch_url, verify=chacractl.config['ssl_verify'])
         r.raise_for_status()
         arch_data = r.json()
