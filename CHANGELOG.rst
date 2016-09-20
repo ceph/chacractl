@@ -1,3 +1,12 @@
+0.0.9
+-----
+Release Date: September 20th, 2016
+
+* Add option to verify binaries were correctly uploaded via checksums.
+* When uploading, fix a bug where a non-200 response would trigger an
+  UnboundLocal error
+
+
 0.0.8
 -----
 Release Date: June 13th, 2016
