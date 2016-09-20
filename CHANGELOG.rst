@@ -1,3 +1,10 @@
+0.0.10
+------
+Release Date: September 20th, 2016
+
+* Fix ``TypeError`` when uploading. Missing ``self`` on method's signature
+
+
 0.0.9
 -----
 Release Date: September 20th, 2016
