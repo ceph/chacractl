@@ -120,6 +120,8 @@ class Binary(object):
                     verify=chacractl.config['ssl_verify'])
         if response.status_code > 201:
             logger.warning("%s -> %s", response.status_code, response.text)
+        # trim off binary filename
+        url = url.rsplit('/', 2)[0] + "/"
         if not self.upload_is_verified(url, filename, digest):
             # Maybe the old file with a different digest is still there, so
             # don't delete it
