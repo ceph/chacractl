@@ -1,3 +1,11 @@
+0.0.11
+------
+Release Date: September 27th, 2016
+
+* Fix updating with checksum verification, where the URL would be wrong for PUT
+  requests
+
+
 0.0.10
 ------
 Release Date: September 20th, 2016
