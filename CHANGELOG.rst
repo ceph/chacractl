@@ -1,3 +1,10 @@
+0.0.12
+------
+Release Date: September 28th, 2016
+
+* Improve logging around checksum mismatches
+
+
 0.0.11
 ------
 Release Date: September 27th, 2016
