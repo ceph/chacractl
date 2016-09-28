@@ -69,7 +69,15 @@ class Binary(object):
         r = requests.get(arch_url, verify=chacractl.config['ssl_verify'])
         r.raise_for_status()
         arch_data = r.json()
-        return arch_data[filename]['checksum'] == digest
+        remote_digest = arch_data[filename]['checksum']
+        verified = remote_digest == digest
+        if not verified:
+            logging.error(
+                    'Checksum mismatch: server has wrong checksum for %s',
+                    filepath)
+            logging.error('local checksum: %s', digest)
+            logging.error('remote checksum: %s', remote_digest)
+        return verified
 
     def post(self, url, filepath):
         filename = os.path.basename(filepath)
@@ -98,13 +106,10 @@ class Binary(object):
                     response.raise_for_status()
         if not self.upload_is_verified(url, filename, digest):
             # Since this is a new file, attempt to delete it
-            logging.error(
-                    'Checksum mismatch: server has wrong checksum for %s!',
-                    filepath)
             logging.error('Deleting corrupted file from server...')
             self.delete(file_url)
             raise SystemExit(
-                    'Checksum mismatch: server has wrong checksum for %s!'
+                    'Checksum mismatch: remote server has wrong checksum for %s'
                     % filepath)
 
     def put(self, url, filepath):
