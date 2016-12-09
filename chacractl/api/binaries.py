@@ -74,7 +74,7 @@ class Binary(object):
         if not verified:
             logging.error(
                     'Checksum mismatch: server has wrong checksum for %s',
-                    filepath)
+                    filename)
             logging.error('local checksum: %s', digest)
             logging.error('remote checksum: %s', remote_digest)
         return verified
