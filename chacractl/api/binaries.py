@@ -5,9 +5,11 @@ from textwrap import dedent
 from hashlib import sha512
 
 import requests
+
 from tambo import Transport
 
 import chacractl
+from chacractl.util import retry
 
 logger = logging.getLogger(__name__)
 
@@ -65,6 +67,7 @@ class Binary(object):
         binary.seek(0)
         return binary, chsum.hexdigest()
 
+    @retry()
     def upload_is_verified(self, arch_url, filename, digest):
         r = requests.get(arch_url, verify=chacractl.config['ssl_verify'])
         r.raise_for_status()
@@ -79,6 +82,7 @@ class Binary(object):
             logging.error('remote checksum: %s', remote_digest)
         return verified
 
+    @retry()
     def post(self, url, filepath):
         filename = os.path.basename(filepath)
         file_url = os.path.join(url, filename) + '/'
@@ -111,7 +115,7 @@ class Binary(object):
             raise SystemExit(
                     'Checksum mismatch: remote server has wrong checksum for %s'
                     % filepath)
-
+    @retry()
     def put(self, url, filepath):
         filename = os.path.basename(filepath)
         logger.info('resource exists and --force was used, will re-upload')
@@ -133,7 +137,7 @@ class Binary(object):
             raise SystemExit(
                     'Checksum mismatch: server has wrong checksum for %s!'
                     % filepath)
-
+    @retry()
     def delete(self, url):
         exists = requests.head(url, verify=chacractl.config['ssl_verify'])
         if exists.status_code == 404:
