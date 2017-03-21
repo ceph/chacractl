@@ -7,6 +7,7 @@ import requests
 from tambo import Transport
 
 import chacractl
+from chacractl.util import retry
 
 logger = logging.getLogger(__name__)
 
@@ -45,6 +46,7 @@ class Project(object):
             url = "%s/" % url
         return url
 
+    @retry()
     def post(self, url):
         exists = requests.head(url, verify=chacractl.config['ssl_verify'])
 
@@ -62,6 +64,7 @@ class Project(object):
             logger.warning("%s -> %s", response.status_code, response.text)
             response.raise_for_status()
 
+    @retry()
     def delete(self, url):
         # XXX This exists here but it is not yet implemented, e.g. nothing
         # calls this method

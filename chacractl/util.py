@@ -1,6 +1,11 @@
 import imp
 import os
 from textwrap import dedent
+from requests.exceptions import BaseHTTPError, RequestException
+
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def default_config_path():
@@ -39,3 +44,42 @@ def ensure_default_config():
     if not os.path.exists(config):
         with open(config, 'w') as f:
             f.write(template)
+
+import functools
+import time
+
+def retry(exceptions=(RequestException, BaseHTTPError), delay=5, times=3):
+    """
+    A decorator for retrying a function call with a specified delay in case of a set of exceptions, mainly
+    intended to avoid the *horrendous* requests lacking API to deal with this.
+
+    :param exceptions:  A tuple of all exceptions that need to be caught for retry
+                                        e.g. retry(exception_list = (Timeout, Readtimeout))
+    :param delay: Amount of delay (seconds) needed between successive retries.
+    :param times: no of times the function should be retried
+    """
+    def outer_wrapper(function):
+        @functools.wraps(function)
+        def inner_wrapper(*args, **kwargs):
+            final_excep = None
+            for counter in xrange(times):
+                if counter > 0:
+                    time.sleep(delay)
+                final_excep = None
+                try:
+                    value = function(*args, **kwargs)
+                    return value
+                except (exceptions) as e:
+                    final_excep = e
+                    if hasattr(e, 'response'):
+                        status = e.response.status_code
+                        if status < 500:
+                            raise
+                    logger.warning('while trying a request, got an exception: %s', str(e))
+                    pass
+
+            if final_excep is not None:
+                raise final_excep
+        return inner_wrapper
+
+    return outer_wrapper

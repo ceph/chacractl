@@ -4,6 +4,7 @@ import logging
 import requests
 from tambo import Transport
 import chacractl
+from chacractl.util import retry
 from chacractl.decorators import catches, requests_errors
 
 
@@ -42,6 +43,7 @@ class Exists(object):
         return url
 
     @catches(requests.exceptions.HTTPError, handler=requests_errors)
+    @retry()
     def head(self, url):
         logger.info('HEAD: %s', url)
         exists = requests.head(
