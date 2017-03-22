@@ -1,3 +1,25 @@
+0.0.14
+------
+Release Date: March 22nd, 2017
+
+* Retry failed HTTP operations, improving robustness of the many requests
+  the tool has to perform when dealing with large amounts of packages.
+
+
+0.0.13
+------
+Release Date: December 9th, 2016
+
+* Fix an issue with filenames vs. paths if a digest doesn't match
+
+
+0.0.12
+------
+Release Date: September 28th, 2016
+
+* Improve logging around checksum mismatches
+
+
 0.0.12
 ------
 Release Date: September 28th, 2016
