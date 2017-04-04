@@ -1,3 +1,9 @@
+0.0.15
+------
+Release Date: April 3rd, 2017
+
+* Fix an issue where an HTTP response might be ``None``
+
 0.0.14
 ------
 Release Date: March 22nd, 2017
