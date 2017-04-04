@@ -72,9 +72,10 @@ def retry(exceptions=(RequestException, BaseHTTPError), delay=5, times=3):
                 except (exceptions) as e:
                     final_excep = e
                     if hasattr(e, 'response'):
-                        status = e.response.status_code
-                        if status < 500:
-                            raise
+                        if hasattr(e.response, 'status_code'):
+                            status = e.response.status_code
+                            if status < 500:
+                                raise
                     logger.warning('while trying a request, got an exception: %s', str(e))
                     pass
 
