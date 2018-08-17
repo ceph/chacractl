@@ -104,7 +104,7 @@ class Binary(object):
             binary, digest = self.load_file(filepath)
             response = requests.post(
                 url,
-                files={'file': binary},
+                files={'file': (filename, binary)},
                 auth=chacractl.config['credentials'],
                 verify=chacractl.config['ssl_verify'])
             if response.status_code > 201:
@@ -125,7 +125,7 @@ class Binary(object):
         binary, digest = self.load_file(filepath)
         response = requests.put(
             url,
-            files={'file': binary},
+            files={'file': (filename, binary)},
             auth=chacractl.config['credentials'],
             verify=chacractl.config['ssl_verify'])
         if response.status_code > 201:
