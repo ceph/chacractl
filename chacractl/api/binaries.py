@@ -1,6 +1,10 @@
 import logging
 import sys
 import os
+try:
+    from StringIO import StringIO
+except ImportError:
+    from io import StringIO
 from textwrap import dedent
 from hashlib import sha512
 
@@ -62,10 +66,12 @@ class Binary(object):
     def load_file(self, filepath):
         chsum = sha512()
         binary = open(filepath, 'rb')
-        for chunk in iter(lambda: binary.read(4096), b''):
-            chsum.update(chunk)
-        binary.seek(0)
-        return binary, chsum.hexdigest()
+        with open(filepath, 'rb') as binary:
+            for chunk in iter(lambda: binary.read(4096), b''):
+                chsum.update(chunk)
+            binary.seek(0)
+            binary_obj = StringIO(binary.read())
+        return binary_obj, chsum.hexdigest()
 
     @retry()
     def upload_is_verified(self, arch_url, filename, digest):
@@ -99,15 +105,14 @@ class Binary(object):
         elif exists.status_code == 404:
             logger.info('POSTing file: %s', filepath)
             binary, digest = self.load_file(filepath)
-            with binary:
-                response = requests.post(
-                        url,
-                        files={'file': binary},
-                        auth=chacractl.config['credentials'],
-                        verify=chacractl.config['ssl_verify'])
-                if response.status_code > 201:
-                    logger.warning("%s -> %s", response.status_code, response.text)
-                    response.raise_for_status()
+            response = requests.post(
+                url,
+                files={'file': (filename, binary)},
+                auth=chacractl.config['credentials'],
+                verify=chacractl.config['ssl_verify'])
+            if response.status_code > 201:
+                logger.warning("%s -> %s", response.status_code, response.text)
+                response.raise_for_status()
         if not self.upload_is_verified(url, filename, digest):
             # Since this is a new file, attempt to delete it
             logging.error('Deleting corrupted file from server...')
@@ -121,12 +126,11 @@ class Binary(object):
         logger.info('resource exists and --force was used, will re-upload')
         logger.info('PUTing file: %s', filepath)
         binary, digest = self.load_file(filepath)
-        with binary:
-            response = requests.put(
-                    url,
-                    files={'file': binary},
-                    auth=chacractl.config['credentials'],
-                    verify=chacractl.config['ssl_verify'])
+        response = requests.put(
+            url,
+            files={'file': (filename, binary)},
+            auth=chacractl.config['credentials'],
+            verify=chacractl.config['ssl_verify'])
         if response.status_code > 201:
             logger.warning("%s -> %s", response.status_code, response.text)
         # trim off binary filename
