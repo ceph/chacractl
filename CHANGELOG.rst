@@ -1,3 +1,10 @@
+0.0.16
+------
+Release Date: August 20th, 2018
+
+* Fix an issue for POSTing files larger than 2GB
+
+
 0.0.15
 ------
 Release Date: April 3rd, 2017
