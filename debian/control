@@ -1,0 +1,29 @@
+Source: chacractl
+Maintainer: Ken Dreyer <kdreyer@redhat.com>
+Section: python
+Priority: optional
+Build-Depends:
+ debhelper (>= 7.4.3),
+ dh-python,
+ python-all,
+ python-pytest,
+ python-requests,
+ python-setuptools,
+ python-tambo,
+ python3-all,
+ python3-pytest,
+ python3-requests,
+ python3-setuptools,
+ python3-tambo
+Standards-Version: 3.9.5
+X-Python-Version: >=2.7
+
+Package: python-chacractl
+Architecture: all
+Depends: ${misc:Depends}, ${python:Depends}
+Description: Client tool for a chacra service
+
+Package: python3-chacractl
+Architecture: all
+Depends: ${misc:Depends}, ${python3:Depends}
+Description: Client tool for a chacra service
