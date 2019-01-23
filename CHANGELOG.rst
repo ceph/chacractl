@@ -1,5 +1,12 @@
+0.0.18
+------
+Release Date: January 23th, 2019
+
+* Release 0.0.17 did not contain the multipart upload support
+
 0.0.17
 ------
+**BOTCHED RELEASE**
 Release Date: January 23th, 2019
 
 * Use multipart uploads to prevent the 2GB issue that was supposedly fixed
