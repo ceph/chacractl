@@ -11,7 +11,7 @@ setup(
     description = 'client tool for a chacra service',
     packages = find_packages(),
     author = 'Alfredo Deza',
-    author_email = 'alfredo [at] deza.pe',
+    author_email = 'adeza@redhat.com',
     scripts = ['bin/chacractl'],
     install_requires = ['tambo>=0.1.0', 'requests'],
     version = metadata['version'],
