@@ -1,9 +1,15 @@
+0.0.17
+------
+Release Date: January 23th, 2019
+
+* Use multipart uploads to prevent the 2GB issue that was supposedly fixed
+  by 0.0.16
+
 0.0.16
 ------
 Release Date: August 20th, 2018
 
 * Fix an issue for POSTing files larger than 2GB
-
 
 0.0.15
 ------
