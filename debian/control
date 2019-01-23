@@ -8,11 +8,13 @@ Build-Depends:
  python-all,
  python-pytest,
  python-requests,
+ python-requests-toolbelt,
  python-setuptools,
  python-tambo,
  python3-all,
  python3-pytest,
  python3-requests,
+ python3-requests-toolbelt,
  python3-setuptools,
  python3-tambo
 Standards-Version: 3.9.5

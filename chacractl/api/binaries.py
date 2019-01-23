@@ -9,6 +9,7 @@ from textwrap import dedent
 from hashlib import sha512
 
 import requests
+from requests_toolbelt.multipart.encoder import MultipartEncoder
 
 from tambo import Transport
 
@@ -63,15 +64,12 @@ class Binary(object):
             url = "%s/" % url
         return url
 
-    def load_file(self, filepath):
+    def get_checksum(self, filepath):
         chsum = sha512()
-        binary = open(filepath, 'rb')
         with open(filepath, 'rb') as binary:
             for chunk in iter(lambda: binary.read(4096), b''):
                 chsum.update(chunk)
-            binary.seek(0)
-            binary_obj = StringIO(binary.read())
-        return binary_obj, chsum.hexdigest()
+        return chsum.hexdigest()
 
     @retry()
     def upload_is_verified(self, arch_url, filename, digest):
@@ -93,6 +91,7 @@ class Binary(object):
         filename = os.path.basename(filepath)
         file_url = os.path.join(url, filename) + '/'
         exists = requests.head(file_url, verify=chacractl.config['ssl_verify'])
+        digest = self.get_checksum(filepath)
 
         if exists.status_code == 200:
             if not self.force:
@@ -103,11 +102,19 @@ class Binary(object):
                 return
             return self.put(file_url, filepath)
         elif exists.status_code == 404:
+            length = os.path.getsize(filepath)
             logger.info('POSTing file: %s', filepath)
-            binary, digest = self.load_file(filepath)
+            mpart = MultipartEncoder(
+                fields={'file': (filename, open(filepath, 'rb'), 'text/plain')}
+            )
+
             response = requests.post(
                 url,
-                files={'file': (filename, binary)},
+                data=mpart,
+                headers={
+                    'Content-Type': mpart.content_type,
+                    'Content-Length': '%d' % length,
+                },
                 auth=chacractl.config['credentials'],
                 verify=chacractl.config['ssl_verify'])
             if response.status_code > 201:
@@ -125,10 +132,18 @@ class Binary(object):
         filename = os.path.basename(filepath)
         logger.info('resource exists and --force was used, will re-upload')
         logger.info('PUTing file: %s', filepath)
-        binary, digest = self.load_file(filepath)
+        digest = self.get_checksum(filepath)
+        length = os.path.getsize(filepath)
+        mpart = MultipartEncoder(
+            fields={'file': (filename, open(filepath, 'rb'), 'text/plain')}
+        )
         response = requests.put(
             url,
-            files={'file': (filename, binary)},
+            data=mpart,
+            headers={
+                'Content-Type': mpart.content_type,
+                'Content-Length': '%d' % length,
+            },
             auth=chacractl.config['credentials'],
             verify=chacractl.config['ssl_verify'])
         if response.status_code > 201:
