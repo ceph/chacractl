@@ -1,3 +1,10 @@
+0.0.19
+------
+Release Date: January 29th, 2019
+
+* Add ``pyopenssl`` as a requirement since ``requests_toolbelt`` doesn't seem
+  to require it anymore
+
 0.0.18
 ------
 Release Date: January 23th, 2019
