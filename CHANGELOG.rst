@@ -1,3 +1,9 @@
+0.0.20
+------
+Release Date: January 30th, 2019
+
+* Pinning ``requests-toolbelt`` to 0.9.1.  Prevents requiring ``pyopenssl``
+
 0.0.19
 ------
 Release Date: January 29th, 2019

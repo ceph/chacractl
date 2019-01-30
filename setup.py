@@ -13,7 +13,7 @@ setup(
     author = 'Alfredo Deza',
     author_email = 'adeza@redhat.com',
     scripts = ['bin/chacractl'],
-    install_requires = ['tambo>=0.1.0', 'requests', 'requests-toolbelt', 'pyopenssl'],
+    install_requires = ['tambo>=0.1.0', 'requests', 'requests-toolbelt==0.9.1'],
     version = metadata['version'],
     url = 'https://github.com/ceph/chacractl',
     license = "MIT",
