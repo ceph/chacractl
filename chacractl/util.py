@@ -62,7 +62,7 @@ def retry(exceptions=(RequestException, BaseHTTPError), delay=5, times=3):
         @functools.wraps(function)
         def inner_wrapper(*args, **kwargs):
             final_excep = None
-            for counter in xrange(times):
+            for counter in range(times):
                 if counter > 0:
                     time.sleep(delay)
                 final_excep = None
