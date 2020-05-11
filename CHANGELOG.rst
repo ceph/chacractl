@@ -1,3 +1,9 @@
+0.0.21
+------
+Release Date: May 12, 2020
+
+* Add Python3 compatibility
+
 0.0.20
 ------
 Release Date: January 30th, 2019
