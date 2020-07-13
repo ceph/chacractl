@@ -25,7 +25,7 @@ class Repo(object):
                     it again.
     """)
     help_menu = "recreate, delete, or update repositories"
-    options = ['recreate', 'update']
+    options = ['recreate', 'delete', 'update']
 
     def __init__(self, argv):
         self.argv = argv
@@ -54,12 +54,29 @@ class Repo(object):
         for k, v in json.items():
             logger.info("%s: %s", k, v)
 
+    @catches(requests.exceptions.HTTPError, handler=requests_errors)
+    @retry()
+    def delete(self, url):
+        exists = requests.head(url, verify=chacractl.config['ssl_verify'])
+        if exists.status_code == 404:
+            logger.warning('repo already deleted')
+            logger.warning('SKIP %s', url)
+            return
+        logger.info('DELETE repo: %s', url)
+        response = requests.delete(
+            url,
+            auth=chacractl.config['credentials'],
+            verify=chacractl.config['ssl_verify'])
+        if response.status_code < 200 or response.status_code > 299:
+            logger.warning("%s -> %s", response.status_code, response.text)
+
     def main(self):
         self.parser = Transport(self.argv, options=self.options)
         self.parser.catch_help = self._help
         self.parser.parse_args()
         recreate = self.parser.get('recreate')
         update = self.parser.get('update')
+        delete = self.parser.get('delete')
         if recreate:
             url_part = os.path.join(recreate, 'recreate')
             url = os.path.join(self.base_url, url_part)
@@ -68,3 +85,7 @@ class Repo(object):
             url_part = os.path.join(update, 'update')
             url = os.path.join(self.base_url, url_part)
             self.post(url)
+        elif delete:
+            url_part = os.path.join(delete, 'delete')
+            url = os.path.join(self.base_url, url_part)
+            self.delete(url)
