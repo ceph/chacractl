@@ -1,3 +1,9 @@
+0.0.22
+------
+Release Date: Aug 20, 2020
+
+* Add ``repo delete`` capability
+
 0.0.21
 ------
 Release Date: May 12, 2020
