@@ -86,6 +86,6 @@ class Repo(object):
             url = os.path.join(self.base_url, url_part)
             self.post(url)
         elif delete:
-            url_part = os.path.join(delete, 'delete')
+            url_part = delete
             url = os.path.join(self.base_url, url_part)
             self.delete(url)
