@@ -1,3 +1,9 @@
+0.0.23
+------
+Release Date: Feb 16, 2021
+
+* api: should not append "delete" in the url for delete
+
 0.0.22
 ------
 Release Date: Aug 20, 2020
