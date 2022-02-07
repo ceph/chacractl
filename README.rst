@@ -84,3 +84,15 @@ before queuing the request. It is useful when a binary has been added and the
 client wants to ensure it is added to the repo::
 
     chacractl repo update ceph/infernalis/debian/jessie
+
+set-raw
+^^^^^^^
+Repos have a "type" inferred from the binaries they contain; if rpms
+are uploaded, the repo will be created as an rpm repo; if debs, a Debian
+repo will result.  'Raw' repos are simple containers for binaries that
+need no further processing into repositories, such as .zip files or
+other binary products that will be simply downloaded.  For such repos,
+use set-raw to set the type of the repo so that no asynchronous repo
+construction is requested.
+
+    chacractl repo set-raw ceph/infernalis/windows/1809
