@@ -23,9 +23,10 @@ class Repo(object):
                     again.
     update          Repository will get updated by running the repo tools on
                     it again.
+    set-raw         Set type of repo to 'raw'
     """)
     help_menu = "recreate, delete, or update repositories"
-    options = ['recreate', 'delete', 'update']
+    options = ['recreate', 'delete', 'update', 'set-raw']
 
     def __init__(self, argv):
         self.argv = argv
@@ -38,17 +39,22 @@ class Repo(object):
 
     @catches(requests.exceptions.HTTPError, handler=requests_errors)
     @retry()
-    def post(self, url):
+    def post(self, url, data=None):
         exists = requests.head(
             url,
             auth=chacractl.config['credentials'],
             verify=chacractl.config['ssl_verify'])
         exists.raise_for_status()
+        headers = None
+        if data:
+            headers = {'Content-Type': 'application/json'}
         logger.info('POST: %s', url)
         response = requests.post(
             url,
             auth=chacractl.config['credentials'],
-            verify=chacractl.config['ssl_verify'])
+            verify=chacractl.config['ssl_verify'],
+            headers=headers,
+            data=data)
         response.raise_for_status()
         json = response.json()
         for k, v in json.items():
@@ -77,6 +83,7 @@ class Repo(object):
         recreate = self.parser.get('recreate')
         update = self.parser.get('update')
         delete = self.parser.get('delete')
+        set_raw = self.parser.get('set-raw')
         if recreate:
             url_part = os.path.join(recreate, 'recreate')
             url = os.path.join(self.base_url, url_part)
@@ -89,3 +96,7 @@ class Repo(object):
             url_part = delete
             url = os.path.join(self.base_url, url_part)
             self.delete(url)
+        elif set_raw:
+            url_part = set_raw
+            url = os.path.join(self.base_url, url_part)
+            self.post(url, '{"type": "raw"}')
