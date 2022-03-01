@@ -1,3 +1,9 @@
+0.0.24
+------
+Release Date: Mar 1, 2022
+
+* Add 'set-raw' command to support raw repos.  includes doc.
+
 0.0.23
 ------
 Release Date: Feb 16, 2021
