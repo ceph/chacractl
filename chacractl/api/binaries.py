@@ -103,7 +103,7 @@ class Binary(object):
             return self.put(file_url, filepath)
         elif exists.status_code == 404:
             length = os.path.getsize(filepath)
-            logger.info('POSTing file: %s', filepath)
+            logger.info('POSTing file: %.1f MB %s', length/(1024.0*1024.0), filepath)
             mpart = MultipartEncoder(
                 fields={'file': (filename, open(filepath, 'rb'), 'text/plain')}
             )
@@ -130,10 +130,10 @@ class Binary(object):
     @retry()
     def put(self, url, filepath):
         filename = os.path.basename(filepath)
-        logger.info('resource exists and --force was used, will re-upload')
-        logger.info('PUTing file: %s', filepath)
         digest = self.get_checksum(filepath)
         length = os.path.getsize(filepath)
+        logger.info('resource exists and --force was used, will re-upload')
+        logger.info('PUTing file: %.1f MB %s', length/(1024.0*1024.0), filepath)
         mpart = MultipartEncoder(
             fields={'file': (filename, open(filepath, 'rb'), 'text/plain')}
         )
