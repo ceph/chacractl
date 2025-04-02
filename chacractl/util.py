@@ -1,4 +1,5 @@
-import imp
+import importlib.util
+import importlib.machinery
 import os
 from textwrap import dedent
 from requests.exceptions import BaseHTTPError, RequestException
@@ -21,11 +22,22 @@ def get_config_path():
         return config
 
 
+# replace imp.load_source as documented in
+# https://docs.python.org/3/whatsnew/3.12.html#imp
+
+def load_source(modname, filename):
+    loader = importlib.machinery.SourceFileLoader(modname, filename)
+    spec = importlib.util.spec_from_file_location(modname, filename, loader=loader)
+    module = importlib.util.module_from_spec(spec)
+    loader.exec_module(module)
+    return module
+
+
 def load_config():
     config = get_config_path()
     if not config:
         return
-    return imp.load_source('chacractl', config)
+    return load_source('chacractl', config)
 
 
 def ensure_default_config():
