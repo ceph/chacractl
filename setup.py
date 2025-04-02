@@ -13,7 +13,7 @@ setup(
     author = 'Alfredo Deza',
     author_email = 'adeza@redhat.com',
     scripts = ['bin/chacractl'],
-    install_requires = ['tambo>=0.1.0', 'requests', 'requests-toolbelt==0.9.1'],
+    install_requires = ['tambo>=0.1.0', 'requests', 'requests-toolbelt'],
     version = metadata['version'],
     url = 'https://github.com/ceph/chacractl',
     license = "MIT",
@@ -28,8 +28,9 @@ setup(
         'Topic :: Utilities',
         'Operating System :: MacOS :: MacOS X',
         'Operating System :: POSIX',
-        'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11',
+        'Programming Language :: Python :: 3.12',
     ],
     tests_require=[
         'pytest'
