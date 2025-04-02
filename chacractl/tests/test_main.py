@@ -25,6 +25,6 @@ class TestApiCredentials(object):
         config_path = tmpdir.join('.chacractl')
         config_path.write(template)
         monkeypatch.setattr(os.path, 'expanduser', lambda _: str(config_path))
-        c = ChacraCtl()
+        c = ChacraCtl(parse=False)
         c.api_credentials()
         assert chacractl.config['ssl_verify'] == expected
