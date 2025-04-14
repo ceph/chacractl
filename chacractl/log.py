@@ -16,8 +16,8 @@ RESET_SEQ = "\033[0m"
 COLOR_SEQ = "\033[1;%dm"
 BOLD_SEQ = "\033[1m"
 
-BASE_COLOR_FORMAT = "[$BOLD%(name)s$RESET][%(color_levelname)-17s] %(message)s"
-BASE_FORMAT = "[%(name)s][%(levelname)-6s] %(message)s"
+BASE_COLOR_FORMAT = "%(asctime)s :: [$BOLD%(name)s$RESET][%(color_levelname)-17s] %(message)s"
+BASE_FORMAT = "%(asctime)s :: [%(name)s][%(levelname)-6s] %(message)s"
 
 
 def supports_color():
