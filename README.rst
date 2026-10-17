@@ -28,7 +28,7 @@ the tool can accept either ``stdin`` or an actual file input.
 
 create
 ^^^^^^
-For POSTing a binary, if posting a single binary it is best to just pass the
+For uploading a binary, if uploading a single binary it is best to just pass the
 full path as the last argument to the ``binary`` subcommand::
 
     chacractl binary create project/ref/distro/distro-version/arch /path/to/binary.rpm
@@ -43,9 +43,9 @@ Below is an example of such a command for a project like ``ceph-deploy``::
     | chacractl binary create ceph-deploy/master/centos/6/noarch
 
 
-If a binary already exists and there is a need to re-upload it, the ``--force``
-flag must be used. In that case the request will be a ``PUT`` and the resource
-will be overwritten in the API.
+Each binary is uploaded with a ``PUT`` to its own URL. If a binary already
+exists it is skipped, and if there is a need to re-upload it, the ``--force``
+flag must be used. In that case the resource will be overwritten in the API.
 
 exists
 ------
